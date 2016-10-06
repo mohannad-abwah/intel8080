@@ -7,7 +7,7 @@ module intel8080(
 );
 
 	wire rA_enable, rB_enable, rC_enable, rD_enable, rE_enable, rH_enable, rL_enable, r1_enable, r2_enable, rIR_enable, counter_clear, ALU_control;
-	wire data_in_select, rA_select, rB_select, rC_select, rD_select, rE_select, rH_select, rL_select, r2_select;
+	wire data_in_select, rA_select, rB_select, rC_select, rD_select, rE_select, rH_select, rL_select, r2_select, const_select;
 	wire[7:0] rA_data, rB_data, rC_data, rD_data, rE_data, rH_data, rL_data, r1_data, r2_data, rIR_data, r2_in;
 	wire[1:0] counter;
 	
@@ -32,6 +32,7 @@ module intel8080(
 		rH_data,
 		rL_data,
 		r2_data,
+		8'b1,
 		data_in_select,
 		rA_select,
 		rB_select,
@@ -41,6 +42,7 @@ module intel8080(
 		rH_select,
 		rL_select,
 		r2_select,
+		const_select,
 		bus
 	);
 	
@@ -56,6 +58,7 @@ module intel8080(
 		rH_select,
 		rL_select,
 		r2_select,
+		const_select,
 		rA_enable,
 		rB_enable,
 		rC_enable,

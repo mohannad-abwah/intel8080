@@ -10,6 +10,7 @@ module control(
 	output reg rH_select,
 	output reg rL_select,
 	output reg r2_select,
+	output reg const_select,
 	output reg rA_enable,
 	output reg rB_enable,
 	output reg rC_enable,
@@ -29,6 +30,8 @@ module control(
 	parameter MOV	= 8'b01xxxxxx;
 	parameter ADD	= 8'b10000xxx;
 	parameter SUB	= 8'b10010xxx;
+	parameter INR	= 8'b00xxx100;
+	parameter DCR	= 8'b00xxx101;
 
 	always @ (*)
 	begin
@@ -44,6 +47,7 @@ module control(
 				rH_select = 1'b0;
 				rL_select = 1'b0;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = 1'b0;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
@@ -69,6 +73,7 @@ module control(
 				rH_select = 1'b0;
 				rL_select = 1'b0;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = rIR_data[5:3] === 3'b111;
 				rB_enable = rIR_data[5:3] === 3'b000;
 				rC_enable = rIR_data[5:3] === 3'b001;
@@ -94,6 +99,7 @@ module control(
 				rH_select = rIR_data[5:3] === 3'b100;
 				rL_select = rIR_data[5:3] === 3'b101;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = 1'b0;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
@@ -119,6 +125,7 @@ module control(
 				rH_select = rIR_data[2:0] === 3'b100;
 				rL_select = rIR_data[2:0] === 3'b101;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = rIR_data[5:3] === 3'b111;
 				rB_enable = rIR_data[5:3] === 3'b000;
 				rC_enable = rIR_data[5:3] === 3'b001;
@@ -144,6 +151,7 @@ module control(
 				rH_select = 1'b0;
 				rL_select = 1'b0;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = 1'b0;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
@@ -169,6 +177,7 @@ module control(
 				rH_select = rIR_data[2:0] === 3'b100;
 				rL_select = rIR_data[2:0] === 3'b101;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = 1'b0;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
@@ -194,6 +203,7 @@ module control(
 				rH_select = 1'b0;
 				rL_select = 1'b0;
 				r2_select = 1'b1;
+				const_select = 1'b0;
 				rA_enable = 1'b1;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
@@ -219,6 +229,7 @@ module control(
 				rH_select = rIR_data[2:0] === 3'b100;
 				rL_select = rIR_data[2:0] === 3'b101;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = 1'b0;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
@@ -244,6 +255,7 @@ module control(
 				rH_select = 1'b0;
 				rL_select = 1'b0;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = 1'b0;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
@@ -269,6 +281,7 @@ module control(
 				rH_select = 1'b0;
 				rL_select = 1'b0;
 				r2_select = 1'b1;
+				const_select = 1'b0;
 				rA_enable = 1'b1;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
@@ -276,6 +289,162 @@ module control(
 				rE_enable = 1'b0;
 				rH_enable = 1'b0;
 				rL_enable = 1'b0;
+				r1_enable = 1'b0;
+				r2_enable = 1'b0;
+				ALU_control = 1'b0;
+				rIR_enable = 1'b1;
+				counter_clear = 1'b1;
+				done = 1'b1;
+			end
+			{INR, 2'b00}:
+			begin
+				data_in_select = 1'b0;
+				rA_select = 1'b0;
+				rB_select = 1'b0;
+				rC_select = 1'b0;
+				rD_select = 1'b0;
+				rE_select = 1'b0;
+				rH_select = 1'b0;
+				rL_select = 1'b0;
+				r2_select = 1'b0;
+				const_select = 1'b1;
+				rA_enable = 1'b0;
+				rB_enable = 1'b0;
+				rC_enable = 1'b0;
+				rD_enable = 1'b0;
+				rE_enable = 1'b0;
+				rH_enable = 1'b0;
+				rL_enable = 1'b0;
+				r1_enable = 1'b1;
+				r2_enable = 1'b0;
+				ALU_control = 1'b0;
+				rIR_enable = 1'b0;
+				counter_clear = 1'b0;
+				done = 1'b0;
+			end
+			{INR, 2'b01}:
+			begin
+				data_in_select = 1'b0;
+				rA_select = rIR_data[5:3] === 3'b111;
+				rB_select = rIR_data[5:3] === 3'b000;
+				rC_select = rIR_data[5:3] === 3'b001;
+				rD_select = rIR_data[5:3] === 3'b010;
+				rE_select = rIR_data[5:3] === 3'b011;
+				rH_select = rIR_data[5:3] === 3'b100;
+				rL_select = rIR_data[5:3] === 3'b101;
+				r2_select = 1'b0;
+				const_select = 1'b0;
+				rA_enable = 1'b0;
+				rB_enable = 1'b0;
+				rC_enable = 1'b0;
+				rD_enable = 1'b0;
+				rE_enable = 1'b0;
+				rH_enable = 1'b0;
+				rL_enable = 1'b0;
+				r1_enable = 1'b0;
+				r2_enable = 1'b1;
+				ALU_control = 1'b0;
+				rIR_enable = 1'b0;
+				counter_clear = 1'b0;
+				done = 1'b0;
+			end
+			{INR, 2'b10}:
+			begin
+				data_in_select = 1'b0;
+				rA_select = 1'b0;
+				rB_select = 1'b0;
+				rC_select = 1'b0;
+				rD_select = 1'b0;
+				rE_select = 1'b0;
+				rH_select = 1'b0;
+				rL_select = 1'b0;
+				r2_select = 1'b1;
+				const_select = 1'b0;
+				rA_enable = rIR_data[5:3] === 3'b111;
+				rB_enable = rIR_data[5:3] === 3'b000;
+				rC_enable = rIR_data[5:3] === 3'b001;
+				rD_enable = rIR_data[5:3] === 3'b010;
+				rE_enable = rIR_data[5:3] === 3'b011;
+				rH_enable = rIR_data[5:3] === 3'b100;
+				rL_enable = rIR_data[5:3] === 3'b101;
+				r1_enable = 1'b0;
+				r2_enable = 1'b0;
+				ALU_control = 1'b0;
+				rIR_enable = 1'b1;
+				counter_clear = 1'b1;
+				done = 1'b1;
+			end
+			{DCR, 2'b00}:
+			begin
+				data_in_select = 1'b0;
+				rA_select = 1'b0;
+				rB_select = 1'b0;
+				rC_select = 1'b0;
+				rD_select = 1'b0;
+				rE_select = 1'b0;
+				rH_select = 1'b0;
+				rL_select = 1'b0;
+				r2_select = 1'b0;
+				const_select = 1'b1;
+				rA_enable = 1'b0;
+				rB_enable = 1'b0;
+				rC_enable = 1'b0;
+				rD_enable = 1'b0;
+				rE_enable = 1'b0;
+				rH_enable = 1'b0;
+				rL_enable = 1'b0;
+				r1_enable = 1'b1;
+				r2_enable = 1'b0;
+				ALU_control = 1'b0;
+				rIR_enable = 1'b0;
+				counter_clear = 1'b0;
+				done = 1'b0;
+			end
+			{DCR, 2'b01}:
+			begin
+				data_in_select = 1'b0;
+				rA_select = rIR_data[5:3] === 3'b111;
+				rB_select = rIR_data[5:3] === 3'b000;
+				rC_select = rIR_data[5:3] === 3'b001;
+				rD_select = rIR_data[5:3] === 3'b010;
+				rE_select = rIR_data[5:3] === 3'b011;
+				rH_select = rIR_data[5:3] === 3'b100;
+				rL_select = rIR_data[5:3] === 3'b101;
+				r2_select = 1'b0;
+				const_select = 1'b0;
+				rA_enable = 1'b0;
+				rB_enable = 1'b0;
+				rC_enable = 1'b0;
+				rD_enable = 1'b0;
+				rE_enable = 1'b0;
+				rH_enable = 1'b0;
+				rL_enable = 1'b0;
+				r1_enable = 1'b0;
+				r2_enable = 1'b1;
+				ALU_control = 1'b1;
+				rIR_enable = 1'b0;
+				counter_clear = 1'b0;
+				done = 1'b0;
+			end
+			{DCR, 2'b10}:
+			begin
+				data_in_select = 1'b0;
+				rA_select = 1'b0;
+				rB_select = 1'b0;
+				rC_select = 1'b0;
+				rD_select = 1'b0;
+				rE_select = 1'b0;
+				rH_select = 1'b0;
+				rL_select = 1'b0;
+				r2_select = 1'b1;
+				const_select = 1'b0;
+				rA_enable = rIR_data[5:3] === 3'b111;
+				rB_enable = rIR_data[5:3] === 3'b000;
+				rC_enable = rIR_data[5:3] === 3'b001;
+				rD_enable = rIR_data[5:3] === 3'b010;
+				rE_enable = rIR_data[5:3] === 3'b011;
+				rH_enable = rIR_data[5:3] === 3'b100;
+				rL_enable = rIR_data[5:3] === 3'b101;
 				r1_enable = 1'b0;
 				r2_enable = 1'b0;
 				ALU_control = 1'b0;
@@ -294,6 +463,7 @@ module control(
 				rH_select = 1'b0;
 				rL_select = 1'b0;
 				r2_select = 1'b0;
+				const_select = 1'b0;
 				rA_enable = 1'b0;
 				rB_enable = 1'b0;
 				rC_enable = 1'b0;
