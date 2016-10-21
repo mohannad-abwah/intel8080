@@ -1,6 +1,11 @@
 module control(
 	input wire[7:0] rIR_data,
-	input wire[1:0] counter,
+	input wire[3:0] counter,
+	output reg sram_chip_enablen,
+	output reg sram_write_enablen,
+	output reg sram_output_enablen,
+	output reg sram_upper_byte,
+	output reg sram_lower_byte,
 	output reg data_in_select,
 	output reg rA_select,
 	output reg rB_select,
@@ -9,6 +14,8 @@ module control(
 	output reg rE_select,
 	output reg rH_select,
 	output reg rL_select,
+	output reg rAdL_enable,
+	output reg rAdH_enable,
 	output reg r2_select,
 	output reg const_select,
 	output reg rA_enable,
@@ -32,9 +39,16 @@ module control(
 	parameter SUB	= 8'b10010xxx;
 	parameter INR	= 8'b00xxx100;
 	parameter DCR	= 8'b00xxx101;
+	parameter LDA	= 8'b00111010;
+	parameter STA	= 8'b00110010;
 
 	always @ (*)
 	begin
+		sram_chip_enablen = 1'b0;
+		sram_write_enablen = 1'b1;
+		sram_output_enablen = 1'b1;
+		sram_upper_byte = 1'b1;
+		sram_lower_byte = 1'b0;
 		data_in_select = 1'b0;
 		rA_select = 1'b0;
 		rB_select = 1'b0;
@@ -43,6 +57,8 @@ module control(
 		rE_select = 1'b0;
 		rH_select = 1'b0;
 		rL_select = 1'b0;
+		rAdL_enable = 1'b0;
+		rAdH_enable = 1'b0;
 		r2_select = 1'b0;
 		const_select = 1'b0;
 		rA_enable = 1'b0;
@@ -60,12 +76,12 @@ module control(
 		done = 1'b0;
 
 		casex ({rIR_data, counter})
-			10'b0:
+			12'b0:
 			begin
 				rIR_enable = 1'b1;
 				counter_clear = 1'b1;
 			end
-			{MOVI, 2'b00}:
+			{MOVI, 4'h0}:
 			begin
 				data_in_select = 1'b1;
 				rA_enable = rIR_data[5:3] === 3'b111;
@@ -76,7 +92,7 @@ module control(
 				rH_enable = rIR_data[5:3] === 3'b100;
 				rL_enable = rIR_data[5:3] === 3'b101;
 			end
-			{MOVI, 2'b01}:
+			{MOVI, 4'h1}:
 			begin
 				rA_select = rIR_data[5:3] === 3'b111;
 				rB_select = rIR_data[5:3] === 3'b000;
@@ -89,7 +105,7 @@ module control(
 				counter_clear = 1'b1;
 				done = 1'b1;
 			end
-			{MOV, 2'b00}:
+			{MOV, 4'h0}:
 			begin
 				rA_select = rIR_data[2:0] === 3'b111;
 				rB_select = rIR_data[2:0] === 3'b000;
@@ -109,12 +125,12 @@ module control(
 				counter_clear = 1'b1;
 				done = 1'b1;
 			end
-			{ADD, 2'b00}:
+			{ADD, 4'h0}:
 			begin
 				rA_select = 1'b1;
 				r1_enable = 1'b1;
 			end
-			{ADD, 2'b01}:
+			{ADD, 4'h1}:
 			begin
 				rA_select = rIR_data[2:0] === 3'b111;
 				rB_select = rIR_data[2:0] === 3'b000;
@@ -125,7 +141,7 @@ module control(
 				rL_select = rIR_data[2:0] === 3'b101;
 				r2_enable = 1'b1;
 			end
-			{ADD, 2'b10}:
+			{ADD, 4'h2}:
 			begin
 				r2_select = 1'b1;
 				rA_enable = 1'b1;
@@ -133,7 +149,7 @@ module control(
 				counter_clear = 1'b1;
 				done = 1'b1;
 			end
-			{SUB, 2'b00}:
+			{SUB, 4'h0}:
 			begin
 				rA_select = rIR_data[2:0] === 3'b111;
 				rB_select = rIR_data[2:0] === 3'b000;
@@ -144,13 +160,13 @@ module control(
 				rL_select = rIR_data[2:0] === 3'b101;
 				r1_enable = 1'b1;
 			end
-			{SUB, 2'b01}:
+			{SUB, 4'h1}:
 			begin
 				rA_select = 1'b1;
 				r2_enable = 1'b1;
 				ALU_control = 1'b1;
 			end
-			{SUB, 2'b10}:
+			{SUB, 4'h2}:
 			begin
 				r2_select = 1'b1;
 				rA_enable = 1'b1;
@@ -158,12 +174,12 @@ module control(
 				counter_clear = 1'b1;
 				done = 1'b1;
 			end
-			{INR, 2'b00}:
+			{INR, 4'h0}:
 			begin
 				const_select = 1'b1;
 				r1_enable = 1'b1;
 			end
-			{INR, 2'b01}:
+			{INR, 4'h1}:
 			begin
 				rA_select = rIR_data[5:3] === 3'b111;
 				rB_select = rIR_data[5:3] === 3'b000;
@@ -174,7 +190,7 @@ module control(
 				rL_select = rIR_data[5:3] === 3'b101;
 				r2_enable = 1'b1;
 			end
-			{INR, 2'b10}:
+			{INR, 4'h2}:
 			begin
 				r2_select = 1'b1;
 				rA_enable = rIR_data[5:3] === 3'b111;
@@ -188,12 +204,12 @@ module control(
 				counter_clear = 1'b1;
 				done = 1'b1;
 			end
-			{DCR, 2'b00}:
+			{DCR, 4'h0}:
 			begin
 				const_select = 1'b1;
 				r1_enable = 1'b1;
 			end
-			{DCR, 2'b01}:
+			{DCR, 4'h1}:
 			begin
 				rA_select = rIR_data[5:3] === 3'b111;
 				rB_select = rIR_data[5:3] === 3'b000;
@@ -205,7 +221,7 @@ module control(
 				r2_enable = 1'b1;
 				ALU_control = 1'b1;
 			end
-			{DCR, 2'b10}:
+			{DCR, 4'h2}:
 			begin
 				r2_select = 1'b1;
 				rA_enable = rIR_data[5:3] === 3'b111;
@@ -215,6 +231,43 @@ module control(
 				rE_enable = rIR_data[5:3] === 3'b011;
 				rH_enable = rIR_data[5:3] === 3'b100;
 				rL_enable = rIR_data[5:3] === 3'b101;
+				rIR_enable = 1'b1;
+				counter_clear = 1'b1;
+				done = 1'b1;
+			end
+			{STA, 4'h0},
+			{LDA, 4'h0}:
+			begin
+				data_in_select = 1'b1;
+				rAdL_enable = 1'b1;
+			end
+			{STA, 4'h1},
+			{LDA, 4'h1}:
+			begin
+				data_in_select = 1'b1;
+				rAdH_enable = 1'b1;
+			end
+			{STA, 4'h2}:
+			begin
+				rA_select = 1'b1;
+			end
+			{STA, 4'h3}:
+			begin
+				rA_select = 1'b1;
+				sram_write_enablen = 1'b0;
+				rIR_enable = 1'b1;
+				counter_clear = 1'b1;
+				done = 1'b1;
+			end
+			{LDA, 4'h2}:
+			begin
+				data_in_select = 1'b1;
+				sram_output_enablen = 1'b0;
+			end
+			{LDA, 4'h3}:
+			begin
+				data_in_select = 1'b1;
+				rA_enable = 1'b1;
 				rIR_enable = 1'b1;
 				counter_clear = 1'b1;
 				done = 1'b1;

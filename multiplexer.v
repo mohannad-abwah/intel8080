@@ -37,7 +37,7 @@ module multiplexer(
 			10'b0000000100: out = data_7;
 			10'b0000000010: out = data_8;
 			10'b0000000001: out = data_9;
-			default: out = 8'b00000000;
+			default: out = 8'bzzzzzzzz;
 		endcase
 	end
 
