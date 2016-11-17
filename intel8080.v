@@ -21,18 +21,18 @@ module intel8080(
 	assign address = {rAdH_data, rAdL_data};
 	assign sram_data = bus;
 	
-	register8 rA	(clock, bus,		rA_enable,	resetn, rA_data);
-	register8 rB	(clock, bus,		rB_enable,	resetn, rB_data);
-	register8 rC	(clock, bus,		rC_enable,	resetn, rC_data);
-	register8 rD	(clock, bus,		rD_enable,	resetn, rD_data);
-	register8 rE	(clock, bus,		rE_enable,	resetn, rE_data);
-	register8 rH	(clock, bus,		rH_enable,	resetn, rH_data);
-	register8 rL	(clock, bus,		rL_enable,	resetn, rL_data);
-	register8 rAdL	(clock, bus,		rAdL_enable,resetn, rAdL_data);
-	register8 rAdH	(clock, bus,		rAdH_enable,resetn, rAdH_data);
-	register8 r1	(clock, bus,		r1_enable,	resetn, r1_data);
-	register8 r2	(clock, r2_in,		r2_enable,	resetn, r2_data);
-	register8 rIR	(clock, data_in,	rIR_enable,	resetn, rIR_data);
+	register8 rA   (clock, bus,     rA_enable,   resetn, rA_data);
+	register8 rB   (clock, bus,     rB_enable,   resetn, rB_data);
+	register8 rC   (clock, bus,     rC_enable,   resetn, rC_data);
+	register8 rD   (clock, bus,     rD_enable,   resetn, rD_data);
+	register8 rE   (clock, bus,     rE_enable,   resetn, rE_data);
+	register8 rH   (clock, bus,     rH_enable,   resetn, rH_data);
+	register8 rL   (clock, bus,     rL_enable,   resetn, rL_data);
+	register8 rAdL (clock, bus,     rAdL_enable, resetn, rAdL_data);
+	register8 rAdH (clock, bus,     rAdH_enable, resetn, rAdH_data);
+	register8 r1   (clock, bus,     r1_enable,   resetn, r1_data);
+	register8 r2   (clock, r2_in,   r2_enable,   resetn, r2_data);
+	register8 rIR  (clock, data_in, rIR_enable,  resetn, rIR_data);
 
 	multiplexer mux(
 		data_in,
